@@ -24,7 +24,15 @@ namespace ProgLab1
                 {
                     throw new Exception();
                 }
-                int decimals = esp.ToString().Substring(esp.ToString().IndexOf(',')).Length - 1;
+
+                double espValue = esp;
+                int counter = 0;
+                while (espValue < 1)
+                {
+                    espValue *= 10;
+                    counter += 1;
+                }
+
                 LineDraw(aBord, bBord, esp, func);
                 double minPoint = 0;
                 while (bBord - aBord >= esp)
@@ -42,7 +50,7 @@ namespace ProgLab1
                     }
                     minPoint = mid;
                 }
-                textBoxAnswer.Text = "(" + Math.Round(minPoint, decimals).ToString() + ":" + Math.Round(FuncValue(minPoint, func), decimals).ToString() + ")";
+                textBoxAnswer.Text = "(" + Math.Round(minPoint, counter).ToString() + ":" + Math.Round(FuncValue(minPoint, func), counter).ToString() + ")";
             }
             catch
             {
@@ -66,11 +74,24 @@ namespace ProgLab1
         }
         private void LineDraw(double aBord, double bBord, double esp, Expression func)
         {
-            int decimals = esp.ToString().Substring(esp.ToString().IndexOf(',')).Length - 1;
+            double espValue = esp;
+            int counter = 0;
+            while (espValue < 1)
+            {
+                espValue *= 10;
+                counter += 1;
+            }
+
+            if ((bBord - aBord) / 50000 > esp)
+            {
+                esp = (bBord - aBord) / 50000;
+            }
+            
             funcChart.Series[0].Points.Clear();
+
             while (aBord < bBord)
             {
-                double funcValue = Math.Round(FuncValue(aBord, func), decimals);
+                double funcValue = Math.Round(FuncValue(aBord, func), counter);
                 funcChart.Series[0].Points.AddXY(aBord, funcValue);
                 aBord += esp;
             }
@@ -87,7 +108,7 @@ namespace ProgLab1
         private void Params_KeyPress(object sender, KeyPressEventArgs e)
         {
             var textBox = (TextBox) sender;
-            if (char.IsDigit(e.KeyChar) || (e.KeyChar == ',' && textBox.Text.Contains(",") == false) || (e.KeyChar == '-' && textBox.Text.Contains("-") == false) || (e.KeyChar == (char)Keys.Back))
+            if (char.IsDigit(e.KeyChar) || (e.KeyChar == ',' && textBox.Text.Contains(",") == false) || (e.KeyChar == '-' && textBox.Text == "") || (e.KeyChar == (char)Keys.Back))
             {
                 e.Handled = false;
             }
